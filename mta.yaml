@@ -25,6 +25,8 @@ modules:
       - name: risk-management-auth
       - name: risk-management-db
       - name: risk-management-destination
+      - name: bs-partner-destination
+      - name: business-partner-destination
 
   - name: risk-management-db-deployer
     type: hdb
@@ -69,8 +71,52 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  
   - name: risk-management-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
+  
+  - name: bs-partner-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+                - Authentication: NoAuthentication
+                  Name: bs-partner-destination-name
+                  Description: Business Partners App used as external service
+                  ProxyType: Internet
+                  HTML5.ForwardAuthToken: true
+                  HTML5.DynamicDestination: true
+                  WebIDEEnabled: true
+                  URL.headers.apiKey: process.env.apikey
+                  URL.headers.apikey: process.env.apikey
+                  Type: HTTP
+                  URL: "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
+
+  - name: business-partner-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        service: destination
+        service-plan: lite
+        HTML5Runtime_enabled: true
+        init_data:
+            instance:
+              destinations:
+                - Authentication: NoAuthentication
+                  Name: business-partner-destination-name
+                  Description: Business Partners App used as external service
+                  ProxyType: Internet
+                  HTML5.ForwardAuthToken: true
+                  HTML5.DynamicDestination: true
+                  WebIDEEnabled: true
+                  Type: HTTP
+                  URL: "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
+                  
