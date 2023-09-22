@@ -52,9 +52,12 @@
     }
   },
   "cds": {
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
     "requires": {
-      "hana": {
-        "deploy-format": "hdbtable"
+      "db": {
+        "kind": "sql"
       },
       "API_BUSINESS_PARTNER": {
         "kind": "odata-v2",
@@ -64,13 +67,14 @@
         },
         "[production]": {
           "credentials": {
-            "destination": "bs-partner-dest"
+            "destination": "business-partner-destination"
           }
         }
       },
       "[production]": {
         "db": "hana",
-        "auth": "xsuaa"
+        "auth": "xsuaa",
+        "kind": "hana-cloud"
       }
     }
   },
