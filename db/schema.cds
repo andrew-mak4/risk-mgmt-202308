@@ -23,9 +23,9 @@ entity Mitigations : managed {
                        on risks.miti = $self;
 }
 
-using {API_BUSINESS_PARTNER as external} from '../srv/external/API_BUSINESS_PARTNER.csn';
+using {API_BUSINESS_PARTNER as busp} from '../srv/external/API_BUSINESS_PARTNER.csn';
 
-entity BusinessPartners as projection on external.A_BusinessPartner {
+entity BusinessPartners as projection on busp.A_BusinessPartner {
     key BusinessPartner,
         LastName,
         FirstName
