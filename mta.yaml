@@ -60,6 +60,15 @@ resources:
       config:
         xsappname: risk-management-${org}-${space}
         tenant-mode: dedicated
+        role-collections:
+        - name: 'RiskManager-${space}'
+          description: Manage Risks
+          role-template-references:
+          - $XSAPPNAME.RiskManager
+        - name: 'RiskViewer-${space}'
+          description: View Risks
+          role-template-references:
+          - $XSAPPNAME.RiskViewer
         oauth2-configuration:
           redirect-uris: ["http*://*.cfapps.us10-001.hana.ondemand.com/**"]
           # redirect-uris: https://9730a22dtrial-dev-risk-management.cfapps.us10-001.hana.ondemand.com/login/callback
