@@ -1,4 +1,4 @@
-_schema-version: '3.1'
+_schema-version: "3.1"
 ID: risk-management
 version: 2.0.0
 description: "Template for the Learning Journey Building side-by-side extensions on SAP BTP"
@@ -60,6 +60,15 @@ resources:
       config:
         xsappname: risk-management-${org}-${space}
         tenant-mode: dedicated
+        role-collections:
+          - name: "RiskManager-risk-mgmt-app"
+            description: Manage Risks
+            role-template-references:
+              - $XSAPPNAME.RiskManager
+          - name: "RiskViewer-risk-mgmt-app"
+            description: View Risks
+            role-template-references:
+              - $XSAPPNAME.RiskViewer
         oauth2-configuration:
           redirect-uris:
             - http*://*.cfapps.us10-001.hana.ondemand.com/**
@@ -69,13 +78,13 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
-  
+
   - name: risk-management-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
-  
+
   - name: business-partner-destination
     type: org.cloudfoundry.managed-service
     parameters:
@@ -83,20 +92,17 @@ resources:
       service-plan: lite
       service-keys:
         - name: business-partner-destination-key
-      config:
-        HTML5Runtime_enabled: true
-        init_data:
-          instance:
-            destinations:
-                - Authentication: NoAuthentication
-                  Name: business-partner-destination
-                  Description: Business Partners App used as external service
-                  ProxyType: Internet
-                  HTML5.ForwardAuthToken: true
-                  HTML5.DynamicDestination: true
-                  WebIDEEnabled: true
-                  URL.headers.apiKey: ${process.env.apikey}
-                  URL.headers.apikey: process.env.apikey
-                  Type: HTTP
-                  URL: "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
-                  
+      # config:
+      #   HTML5Runtime_enabled: true
+      #   init_data:
+      #     instance:
+      #       destinations:
+      #         - Authentication: NoAuthentication
+      #           Name: business-partner-destination
+      #           Description: Business Partners App used as external service
+      #           ProxyType: Internet
+      #           HTML5.ForwardAuthToken: true
+      #           HTML5.DynamicDestination: true
+      #           WebIDEEnabled: true
+      #           Type: HTTP
+      #           URL: "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
