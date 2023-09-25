@@ -60,25 +60,43 @@ resources:
       config:
         xsappname: risk-management-${org}-${space}
         tenant-mode: dedicated
-        role-collections:
-        - name: 'RiskManager-${space}'
-          description: Manage Risks
-          role-template-references:
-          - $XSAPPNAME.RiskManager
-        - name: 'RiskViewer-${space}'
-          description: View Risks
-          role-template-references:
-          - $XSAPPNAME.RiskViewer
         oauth2-configuration:
-          redirect-uris: ["http*://*.cfapps.us10-001.hana.ondemand.com/**"]
-          # redirect-uris: https://9730a22dtrial-dev-risk-management.cfapps.us10-001.hana.ondemand.com/login/callback
+          redirect-uris:
+            - http*://*.cfapps.us10-001.hana.ondemand.com/**
+            # redirect-uris: https://9730a22dtrial-dev-risk-management.cfapps.us10-001.hana.ondemand.com/login/callback
   - name: risk-management-db
     type: com.sap.xs.hdi-container
     parameters:
       service: hana
       service-plan: hdi-shared
+  
   - name: risk-management-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
+  
+  - name: business-partner-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+      service-keys:
+        - name: business-partner-destination-key
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+                - Authentication: NoAuthentication
+                  Name: business-partner-destination
+                  Description: Business Partners App used as external service
+                  ProxyType: Internet
+                  HTML5.ForwardAuthToken: true
+                  HTML5.DynamicDestination: true
+                  WebIDEEnabled: true
+                  URL.headers.apiKey: ${process.env.apikey}
+                  URL.headers.apikey: process.env.apikey
+                  Type: HTTP
+                  URL: "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER/"
+                  
