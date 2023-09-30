@@ -1,6 +1,11 @@
 _schema-version: "3.1"
 ID: risk-management
-version: 2.0.0
+# copyright: 
+# includes:
+#   - name: 
+#     path:
+# provider:
+version: 2.0.1
 description: "Template for the Learning Journey Building side-by-side extensions on SAP BTP"
 parameters:
   enable-parallel-deployments: true
@@ -9,47 +14,146 @@ build-parameters:
     - builder: custom
       commands:
         - npx cds build --production
-modules:
-  - name: risk-management-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: risk-management-auth
-      - name: risk-management-db
-      - name: risk-management-destination
 
-  - name: risk-management-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: risk-management-db
+  # lists the deployable parts contained in the MTA deployment archive
+  modules:
+    - name: risk-management-srv # must be unique within the MTA it identifies
 
-  - name: risk-management
-    type: approuter.nodejs
-    path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
-    parameters:
-      keep-existing-routes: true
-      disk-quota: 256M
-      memory: 256M
-    requires:
-      - name: srv-api
-        group: destinations
-        properties:
-          name: srv-api # must be used in xs-app.json as well
-          url: ~{srv-url}
-          forwardAuthToken: true
-      - name: risk-management-auth
+      type:
+        nodejs # defines which deployment mechanism to be used for this module
+            # the next are optional attributes
 
+            #a set with automatic buildpack detection:
+            # javascript.nodejs; custom; application
+
+            #a set with Node.js runtime (nodejs_buildpack):
+            # nodejs;
+
+            #a set with sap_java_buildpack:
+            # java; java.tomee; java.tomcat
+
+            #a set with appropriate buildpacks:
+            # ruby; go; python; php; .NetCore; binary;  staticfile
+
+      path:
+        gen/srv
+          # the file-system path relative to the root of the MTA directory
+          # the content of the file is used to create or update the CF app
+          # is used only during MTA build, deployment-tool ignore it
+
+      description: non-translatable, free-text string
+
+      # allow execution of descriptor defined commands at specific moments of the module's lifecycle
+      hooks:
+        - name: demo-about-hooks
+          type: task # currently the only supported
+          phases: # phase of the module's lifecycle at which the hook will be executed.
+            - "application.before-stop.live"
+            - "application.before-stop.idle"
+            - "application.after-stop.live"
+            - "application.after-stop.idle"
+          parameters:
+            #are used to define the hook's functionality
+            name: custom-name # defines the name of the task
+            command: "bin/rails db:migrate" # the command that will be executed
+            memory: 256MB # also CF application's has default memory value
+            disk-quota: 512MB # also CF application's has default
+
+      # a structured set of name-value pairs
+      # properties:
+      # MTA_WAIT_AFTER_APP_STOP: 30
+      # adds configurable delay in seconds, after stopping the application
+      # if a module, which requires the resource, represents a CF application, the resource properties are injected into the environment of the application
+
+      # reserved variables that affect the behavior of the MTA-aware tools, such as the deployer
+      # have platform-specific semantics
+      # to reference a parameter value, use the placeholder notation ${<parameter>}, for example, ${default-host}.
+      parameters:
+        buildpack:
+          nodejs_buildpack # the name or the URL of a custom buildpack required by the application
+
+          # buildpacks: []
+
+          # default-app-name: [module name with or without a name-space prefix]
+          #read only
+
+          # app-name:         ${default-app-name} - default value
+
+          # command:          a custom command required to start the application
+
+          # create-service-broker:  [false]|true
+
+          # default-instances:      [1] the number of application instances that are started during the deployment
+
+          # host:             default value: ${default-host}
+          # hostname or subdomain where an application is available later
+
+          # default-domain:   value => default domain for the current organization
+          #read only
+
+          # default-host:     ${org}-${space}-<module_name>
+          # read only,      used with host-based routing to compose the default URI
+
+          # default-uri:      ${host}.${domain}
+          # read only
+
+          # default-url:      ${protocol}://${default-uri} => ${protocol}://${host}.${domain}
+          # read only
+
+          # disk-quota; memory; no-route: [false]; no-start
+
+          # enable-parallel-service-bindings
+          # health-check-type; health-check-http-endpoint; health-check-timeout
+
+          # set props for service-broker
+
+          # idle-domain;  idle-domains; idle-host; idle-routes
+          # Valid for a blue-green deployment when a new application version is started on a temporary route and so on
+
+      build-parameters:
+        builder: npm
+      provides:
+          # specifies the names of provides sections, each containing configuration data;
+          # the data provided can be required by other modules in the same MTA
+
+        - name: srv-api # required by consumers of CAP services (e.g. approuter)
+          properties:
+            srv-url: ${default-url}
+      requires:
+        # specifies the names of requires sections provided in resource that have been declared for the same MTA.
+        # Tools check if all required names are provided within the MTA
+        - name: risk-management-auth
+        - name: risk-management-db
+        - name: risk-management-destination
+
+    - name: risk-management-db-deployer
+      type: hdb
+      path: gen/db
+      parameters:
+        buildpack: nodejs_buildpack
+      requires:
+        - name: risk-management-db
+
+    - name: risk-management
+      type: approuter.nodejs
+      path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
+      parameters:
+        keep-existing-routes: true
+        disk-quota: 256M
+        memory: 256M
+      requires:
+        - name: srv-api
+          group: destinations
+          properties:
+            name: srv-api # must be used in xs-app.json as well
+            url: ~{srv-url}
+            forwardAuthToken: true
+        - name: risk-management-auth
+
+# The resources may be used as:
+# platform services managed by the deployer or only used by the applications
+# configuration entries used by the applications and services
+# only name mandatory
 resources:
   - name: risk-management-auth
     type: org.cloudfoundry.managed-service
@@ -73,6 +177,7 @@ resources:
           redirect-uris:
             - http*://*.cfapps.us10-001.hana.ondemand.com/**
             # redirect-uris: https://9730a22dtrial-dev-risk-management.cfapps.us10-001.hana.ondemand.com/login/callback
+  
   - name: risk-management-db
     type: com.sap.xs.hdi-container
     parameters:
