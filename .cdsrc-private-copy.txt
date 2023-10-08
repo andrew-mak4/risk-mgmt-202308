@@ -1,0 +1,68 @@
+{
+  "requires": {
+    "[hybrid]": {
+      "some-db": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10-001.hana.ondemand.com",
+          "org": "3d659e7etrial",
+          "space": "dev",
+          "instance": "risk-management-db",
+          "key": "risk-management-db-key",
+          "resolved": false
+        },
+        "kind": "hana-cloud",
+        "vcap": {
+          "name": "some-db"
+        }
+      },
+      "auth": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10-001.hana.ondemand.com",
+          "org": "3d659e7etrial",
+          "space": "dev",
+          "instance": "risk-management-auth",
+          "key": "risk-management-auth-key",
+          "resolved": false
+        },
+        "kind": "xsuaa",
+        "vcap": {
+          "name": "auth"
+        }
+      }
+    },
+    "[deveopment]": {
+      "auth": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10-001.hana.ondemand.com",
+          "org": "3d659e7etrial",
+          "space": "dev",
+          "instance": "risk-management-auth",
+          "key": "risk-management-auth-key",
+          "resolved": false
+        },
+        "kind": "xsuaa",
+        "vcap": {
+          "name": "auth"
+        }
+      },
+      "destinations": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10-001.hana.ondemand.com",
+          "org": "3d659e7etrial",
+          "space": "dev",
+          "instance": "risk-management-destination",
+          "key": "risk-management-destination-key",
+          "resolved": false
+        },
+        "kind": "destinations",
+        "vcap": {
+          "name": "destinations"
+        }
+      }
+    }
+  }
+}
