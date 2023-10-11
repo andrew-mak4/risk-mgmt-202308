@@ -8,7 +8,8 @@ build-parameters:
   before-all:
     - builder: custom
       commands:
-        - npx cds build --production
+        - npm install
+        - npx -p @SAP/cds-dk cds build --production
 modules:
   - name: risk-management-srv
     type: nodejs
