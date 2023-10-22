@@ -1,0 +1,11 @@
+_schema-version: "3.1"
+ID: risk-management.cm-api
+extends: risk-management
+
+resources:
+  - name: customer-return-destination
+    parameters:
+      service: destination
+      service-plan: lite
+      service-keys:
+        - name: customer-return-destination-key
