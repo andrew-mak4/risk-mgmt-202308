@@ -110,3 +110,6 @@ resources:
   
   - name: customer-return-destination
     type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

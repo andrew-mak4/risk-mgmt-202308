@@ -2,10 +2,14 @@ _schema-version: "3.1"
 ID: risk-management.cm-api
 extends: risk-management
 
+modules:
+  - name: risk-management
+    parameters:
+      disk-quota: 512M
+      memory: 512M
+
 resources:
   - name: customer-return-destination
     parameters:
-      service: destination
-      service-plan: lite
       service-keys:
         - name: customer-return-destination-key
