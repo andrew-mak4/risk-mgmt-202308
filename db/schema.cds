@@ -10,7 +10,8 @@ entity Risks : managed {
         descr       : String;
         miti        : Association to Mitigations;
         impact      : Integer;
-        bp : Association to BusinessPartners;
+        bp          : Association to BusinessPartners;
+        cr          : Association to CustomerReturns;
         criticality : Integer;
 }
 
@@ -23,9 +24,19 @@ entity Mitigations : managed {
                        on risks.miti = $self;
 }
 
-using {API_BUSINESS_PARTNER as external} from '../srv/external/API_BUSINESS_PARTNER.csn';
+using {API_CUSTOMER_RETURN_SRV as cr} from '../srv/external/API_CUSTOMER_RETURN_SRV.csn';
 
-entity BusinessPartners as projection on external.A_BusinessPartner {
+entity CustomerReturns  as projection on cr.A_CustomerReturn {
+    key CustomerReturn,
+        CustomerReturnType,
+        TransactionCurrency,
+        TotalNetAmount
+}
+
+
+using {API_BUSINESS_PARTNER as bp} from '../srv/external/API_BUSINESS_PARTNER.csn';
+
+entity BusinessPartners as projection on bp.A_BusinessPartner {
     key BusinessPartner,
         LastName,
         FirstName

@@ -10,6 +10,7 @@ annotate rm.Risks with {
     miti        @title: 'Mitigation';
     impact      @title: 'Impact';
     bp          @title: 'Business Partner';
+    cr          @title: 'Customer Return Account';
     criticality @title: 'Criticality';
 }
 
@@ -30,6 +31,11 @@ annotate rm.BusinessPartners with {
     );
     LastName        @title: 'Last Name';
     FirstName       @title: 'First Name';
+}
+
+annotate rm.CustomerReturns with {
+    TotalNetAmount     @title: 'Return Amount';
+    CustomerReturnType @title: 'Return Type'
 }
 
 annotate rm.Risks with {

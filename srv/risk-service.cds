@@ -30,4 +30,7 @@ service RiskService @(path: 'service/risk') {
 
     @readonly
     entity BusinessPartners as projection on rm.BusinessPartners;
+
+    @readonly
+    entity CustomerReturns as projection on rm.CustomerReturns;
 }

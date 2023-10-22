@@ -78,6 +78,20 @@
           }
         }
       },
+      "API_CUSTOMER_RETURN_SRV": {
+        "kind": "odata-v2",
+        "model": "srv\\external\\API_CUSTOMER_RETURN_SRV",
+        "[development]": {
+          "credentials": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_CUSTOMER_RETURN_SRV"
+          }
+        },
+        "[production, hybrid]": {
+          "credentials": {
+            "destination": "customer-return-destination"
+          }
+        }
+      },
       "[production]": {
         "db": "hana",
         "auth": "xsuaa",
